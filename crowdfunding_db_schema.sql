@@ -1,59 +1,40 @@
-CREATE TABLE "campaign" (
-    "cf_id" int   NOT NULL,
-    "contact_id" int   NOT NULL,
-    "company_name" varchar(100)   NOT NULL,
-    "description" text   NOT NULL,
-    "goal" numeric(10,2)   NOT NULL,
-    "pledged" numeric(10,2)   NOT NULL,
-    "outcome" varchar(50)   NOT NULL,
-    "backers_count" int   NOT NULL,
-    "country" varchar(10)   NOT NULL,
-    "currency" varchar(10)   NOT NULL,
-    "launch_date" date   NOT NULL,
-    "end_date" date   NOT NULL,
-    "category_id" varchar(10)   NOT NULL,
-    "subcategory_id" varchar(10)   NOT NULL,
-    CONSTRAINT "pk_campaign" PRIMARY KEY (
-        "cf_id"
-     )
+-- Drop tables if they exist
+DROP TABLE IF EXISTS Campaign, Contacts, Subcategory, Category CASCADE;
+
+-- Create Contacts table
+CREATE TABLE Contacts (
+    contact_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE TABLE "category" (
-    "category_id" varchar(10)   NOT NULL,
-    "category_name" varchar(50)   NOT NULL,
-    CONSTRAINT "pk_category" PRIMARY KEY (
-        "category_id"
-     )
+-- Create Category table
+CREATE TABLE Category (
+    category_id VARCHAR(10) PRIMARY KEY,
+    category_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE "subcategory" (
-    "subcategory_id" varchar(10)   NOT NULL,
-    "subcategory_name" varchar(50)   NOT NULL,
-    CONSTRAINT "pk_subcategory" PRIMARY KEY (
-        "subcategory_id"
-     )
+-- Create Subcategory table
+CREATE TABLE Subcategory (
+    subcategory_id VARCHAR(10) PRIMARY KEY,
+    subcategory_name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE "contacts" (
-    "contact_id" int   NOT NULL,
-    "first_name" varchar(50)   NOT NULL,
-    "last_name" varchar(50)   NOT NULL,
-    "email" varchar(100)   NOT NULL,
-    CONSTRAINT "pk_contacts" PRIMARY KEY (
-        "contact_id"
-     )
+-- Create Campaign table
+CREATE TABLE Campaign (
+    cf_id SERIAL PRIMARY KEY,
+    contact_id INT REFERENCES Contacts(contact_id) ON DELETE CASCADE,
+    company_name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    goal NUMERIC(10, 2) NOT NULL,
+    pledged NUMERIC(10, 2) NOT NULL,
+    outcome VARCHAR(50) NOT NULL,
+    backers_count INT NOT NULL,
+    country VARCHAR(2) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    launch_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    category_id VARCHAR(10) REFERENCES Category(category_id) ON DELETE CASCADE,
+    subcategory_id VARCHAR(10) REFERENCES Subcategory(subcategory_id) ON DELETE CASCADE
 );
-
-ALTER TABLE "campaign" ADD CONSTRAINT "fk_campaign_contact_id" FOREIGN KEY("contact_id")
-REFERENCES "contacts" ("contact_id");
-
-ALTER TABLE "campaign" ADD CONSTRAINT "fk_campaign_category_id" FOREIGN KEY("category_id")
-REFERENCES "category" ("category_id");
-
-ALTER TABLE "campaign" ADD CONSTRAINT "fk_campaign_subcategory_id" FOREIGN KEY("subcategory_id")
-REFERENCES "subcategory" ("subcategory_id");
-
-SELECT * FROM campaign
-SELECT * FROM category
-SELECT * FROM subcategory
-SELECT * FROM contacts
