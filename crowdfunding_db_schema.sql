@@ -1,3 +1,6 @@
+-- Drop tables if they exist
+DROP TABLE IF EXISTS campaign, contacts, subcategory, category;
+
 -- Create Contacts table
 CREATE TABLE Contacts (
     contact_id SERIAL PRIMARY KEY,
